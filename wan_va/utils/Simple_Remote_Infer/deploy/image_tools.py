@@ -53,8 +53,10 @@ def _resize_with_pad_pil(image: Image.Image, height: int, width: int,
         return image  # No need to resize if the image is already the correct size.
 
     ratio = max(cur_width / width, cur_height / height)
-    resized_height = int(cur_height / ratio)
-    resized_width = int(cur_width / ratio)
+    # A very thin image can round down to 0 pixels when downscaled.
+    # Pillow requires both resize dimensions to be at least 1.
+    resized_height = max(1, int(cur_height / ratio))
+    resized_width = max(1, int(cur_width / ratio))
     resized_image = image.resize((resized_width, resized_height),
                                  resample=method)
 
